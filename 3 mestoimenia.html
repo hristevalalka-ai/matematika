@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="bg">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Магазин – Математика 2. клас (Ресто)</title>
+<style>
+:root{
+font-family: system-ui, Arial, sans-serif;
+--bg1:#fef3c7;
+--bg2:#dbeafe;
+--card:#ffffffcc;
+--ink:#111827;
+--muted:#4b5563;
+--good:#16a34a;
+--bad:#dc2626;
+--brand:#2563eb;
+--shadow: 0 10px 25px rgba(0,0,0,.08);
+}
+body{
+margin:0;
+color:var(--ink);
+background:
+radial-gradient(900px 500px at 10% 10%, var(--bg1), transparent 60%),
+radial-gradient(900px 500px at 90% 20%, var(--bg2), transparent 60%),
+linear-gradient(180deg, #f7fbff, #fffaf0);
+min-height:100vh;
+}
+.wrap{max-width:1100px;margin:0 auto;padding:16px;}
+h1{margin:6px 0 2px;font-size:22px;}
+.sub{margin:0 0 12px;color:var(--muted);font-size:14px;}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:stretch;}
+.card{
+background:var(--card);
+border:1px solid #fff;
+backdrop-filter: blur(8px);
+border-radius:16px;
+padding:14px;
+box-shadow: var(--shadow);
+flex: 1 1 320px;
+}
+.topbar{
+display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;
+margin-bottom:10px;
+}
+.pill{
+display:flex;gap:10px;flex-wrap:wrap;align-items:center;
+background:#ffffffb3;border:1px solid #fff;border-radius:999px;
+padding:10px 12px;box-shadow: var(--shadow);
+font-weight:900;
+}
+.tag{
+display:inline-flex;align-items:center;gap:6px;
+background:#fff;border:1px solid #eee;border-radius:999px;
+padding:6px 10px;font-size:12px;font-weight:900;
+}
+.grid{
+display:grid;
+grid-template-columns: repeat(3, minmax(0, 1fr));
+gap:10px;
+}
+@media (max-width: 860px){ .grid{grid-template-columns: repeat(2, minmax(0, 1fr));} }
+@media (max-width: 520px){ .grid{grid-template-columns: 1fr;} }
+
+.item{
+background:#fff;
+border:2px solid #e5e7eb;
+border-radius:14px;
+padding:10px;
+display:flex;
+gap:10px;
+align-items:center;
+cursor:pointer;
+user-select:none;
+box-shadow: 0 10px 18px rgba(0,0,0,.06);
+transition: transform .08s;
+}
+.item:hover{transform: translateY(-1px);}
+.emoji{
+width:46px;height:46px;border-radius:14px;
+display:flex;align-items:center;justify-content:center;
+font-size:26px;
+background: linear-gradient(135deg, #fde68a, #93c5fd);
+border:1px solid #fff;
+flex: 0 0 auto;
+}
+.item .name{font-weight:1000;}
+.item .price{color:var(--muted);font-weight:900;font-size:13px;}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+button{
+border:0;border-radius:12px;padding:10px 12px;cursor:pointer;
+font-weight:1000;
+background: linear-gradient(135deg, #3b82f6, #2563eb);
+color:#fff;
+box-shadow: 0 8px 16px rgba(37,99,235,.22);
+}
+button.secondary{
+background: linear-gradient(135deg, #f8fafc, #eef2ff);
+color:#111;border:1px solid #dbeafe;box-shadow:none;
+}
+button.danger{
+background: linear-gradient(135deg, #fb7185, #e11d48);
+box-shadow: 0 8px 16px rgba(225,29,72,.18);
+}
+button:disabled{opacity:.55;cursor:not-allowed;}
+.hr{height:1px;background:#00000010;margin:12px 0;}
+.cartLine{
+display:flex;align-items:center;justify-content:space-between;
+padding:8px 10px;border-radius:12px;background:#fff;border:1px solid #eee;
+margin:8px 0;
+gap:10px;
+}
+.cartLeft{display:flex;align-items:center;gap:10px;}
+.xbtn{
+background:#fff;border:1px solid #eee;color:#111;
+border-radius:10px;padding:6px 10px;font-weight:1000;cursor:pointer;
+}
+.noteRow{
+display:flex;gap:10px;flex-wrap:wrap;align-items:center;
+margin-top:8px;
+}
+.note{
+background:#fff;border:2px solid #e5e7eb;border-radius:14px;
+padding:10px 12px;font-weight:1000;cursor:pointer;user-select:none;
+box-shadow: 0 10px 18px rgba(0,0,0,.06);
+min-width: 86px;
+text-align:center;
+}
+.note.selected{border-color:#60a5fa;background:#eff6ff;}
+.inputRow{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:10px;}
+input{
+padding:10px 12px;border-radius:12px;border:2px solid #dbeafe;
+font-size:16px;font-weight:1000;width:160px;
+background:#fff;
+}
+.status{margin-top:10px;font-weight:1000;font-size:16px;min-height:22px;}
+.good{color:var(--good);}
+.bad{color:var(--bad);}
+.muted{color:var(--muted);font-weight:900;}
+.small{font-size:13px;color:var(--muted);margin-top:10px;line-height:1.35;}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="topbar">
+<div>
+<h1>🛒 Магазин – Ресто (Математика 2. клас)</h1>
+<p class="sub">Избери до 4 продукта, после избери банкнота и напиши рестото. (Без подсказки.)</p>
+</div>
+<div class="pill">
+<span class="tag">⭐ Точки: <span id="score">0</span></span>
+<span class="tag">🔥 Серия: <span id="streak">0</span></span>
+<span class="tag">❌ Грешки: <span id="mistakes">0</span></span>
+</div>
+</div>
+
+<div class="row">
+<div class="card">
+<div class="btnrow" style="justify-content:space-between;">
+<div style="font-weight:1000;">🧺 Стоки</div>
+<div class="btnrow">
+<button class="secondary" id="newShopBtn">Нови цени</button>
+</div>
+</div>
+<div class="hr"></div>
+
+<div class="grid" id="shopGrid"></div>
+
+<p class="small">
+Правило: можеш да добавиш най-много <b>4</b> продукта в кошницата.
+</p>
+</div>
+
+<div class="card">
+<div style="font-weight:1000;">🧾 Кошница</div>
+<div class="hr"></div>
+
+<div id="cart"></div>
+<div class="small muted" id="cartCount">0/4 продукта</div>
+
+<div class="hr"></div>
+
+<div style="font-weight:1000;">💵 Избери банкнота</div>
+<div class="noteRow" id="notes"></div>
+
+<div class="hr"></div>
+
+<div style="font-weight:1000;">💰 Ресто</div>
+<div class="inputRow">
+<input id="changeInput" inputmode="numeric" pattern="[0-9]*" placeholder="Напиши число (лв.)" />
+<button id="payBtn">Плати</button>
+<button class="secondary" id="clearBtn">Изчисти</button>
+</div>
+
+<div class="status" id="status"></div>
+
+<p class="small">
+*Няма да показва „тотал“ или подсказки. Учениците смятат сами по цените в кошницата.
+</p>
+</div>
+</div>
+</div>
+
+<script>
+// ====== НАСТРОЙКИ (лесно за промяна) ======
+const MAX_ITEMS = 4;
+const BANKNOTES = [5, 10, 20, 50]; // банкноти (лв.)
+const PRICE_RANGE = { min: 1, max: 20 }; // цели числа (лв.), подходящи за 2. клас
+
+// ====== СТОКИ (с "картинки" - емоджита) ======
+const CATALOG = [
+{ id:"apple", name:"Ябълка", emoji:"🍎" },
+{ id:"banana", name:"Банан", emoji:"🍌" },
+{ id:"bread", name:"Хляб", emoji:"🍞" },
+{ id:"milk", name:"Мляко", emoji:"🥛" },
+{ id:"cheese", name:"Сирене", emoji:"🧀" },
+{ id:"juice", name:"Сок", emoji:"🧃" },
+{ id:"cookie", name:"Бисквита",emoji:"🍪" },
+{ id:"candy", name:"Бонбон", emoji:"🍬" },
+{ id:"pencil", name:"Молив", emoji:"✏️" },
+{ id:"book", name:"Тетрадка",emoji:"📒" },
+{ id:"ball", name:"Топка", emoji:"⚽" },
+{ id:"toy", name:"Играчка", emoji:"🧸" },
+];
+
+// ====== СЪСТОЯНИЕ ======
+let priceMap = new Map(); // id -> price
+let cart = []; // array of item ids
+let selectedNote = null;
+
+let score = 0, streak = 0, mistakes = 0;
+
+// ====== ЕЛЕМЕНТИ ======
+const shopGrid = document.getElementById("shopGrid");
+const cartEl = document.getElementById("cart");
+const cartCountEl = document.getElementById("cartCount");
+const notesEl = document.getElementById("notes");
+const changeInput = document.getElementById("changeInput");
+const statusEl = document.getElementById("status");
+
+const scoreEl = document.getElementById("score");
+const streakEl = document.getElementById("streak");
+const mistakesEl = document.getElementById("mistakes");
+
+document.getElementById("newShopBtn").addEventListener("click", () => {
+newPrices();
+renderShop();
+clearAll(false);
+setStatus("", "");
+});
+
+document.getElementById("clearBtn").addEventListener("click", () => {
+clearAll(true);
+setStatus("", "");
+});
+
+document.getElementById("payBtn").addEventListener("click", onPay);
+
+// ====== ПОМОЩНИ ======
+function randInt(min, max){
+return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function setStats(){
+scoreEl.textContent = score;
+streakEl.textContent = streak;
+mistakesEl.textContent = mistakes;
+}
+
+function setStatus(text, kind){
+statusEl.textContent = text;
+statusEl.className = "status " + (kind || "");
+}
+
+function totalCart(){
+let sum = 0;
+for(const id of cart) sum += (priceMap.get(id) || 0);
+return sum;
+}
+
+function uniqueCartLines(){
+// counts by id
+const counts = new Map();
+for(const id of cart) counts.set(id, (counts.get(id) || 0) + 1);
+return Array.from(counts.entries()); // [id, qty]
+}
+
+// ====== РЕНДЕР ======
+function newPrices(){
+priceMap = new Map();
+for(const it of CATALOG){
+priceMap.set(it.id, randInt(PRICE_RANGE.min, PRICE_RANGE.max));
+}
+}
+
+function renderShop(){
+shopGrid.innerHTML = "";
+for(const it of CATALOG){
+const price = priceMap.get(it.id);
+const div = document.createElement("div");
+div.className = "item";
+div.innerHTML = `
+<div class="emoji" aria-hidden="true">${it.emoji}</div>
+<div style="text-align:left;">
+<div class="name">${it.name}</div>
+<div class="price">${price} лв.</div>
+</div>
+`;
+div.addEventListener("click", () => addToCart(it.id));
+shopGrid.appendChild(div);
+}
+}
+
+function renderCart(){
+cartEl.innerHTML = "";
+
+const lines = uniqueCartLines();
+if(lines.length === 0){
+cartEl.innerHTML = `<div class="muted">Кошницата е празна.</div>`;
+} else {
+for(const [id, qty] of lines){
+const it = CATALOG.find(x => x.id === id);
+const price = priceMap.get(id);
+const line = document.createElement("div");
+line.className = "cartLine";
+line.innerHTML = `
+<div class="cartLeft">
+<div class="emoji" style="width:38px;height:38px;border-radius:12px;font-size:22px;">${it.emoji}</div>
+<div>
+<div style="font-weight:1000;">${it.name} ${qty > 1 ? `× ${qty}` : ""}</div>
+<div class="muted" style="font-size:12px;">${price} лв. ${qty>1 ? `• общо ${price*qty} лв.` : ""}</div>
+</div>
+</div>
+<button class="xbtn" title="Премахни 1" aria-label="Премахни 1">−</button>
+`;
+line.querySelector(".xbtn").addEventListener("click", () => removeOne(id));
+cartEl.appendChild(line);
+}
+}
+
+cartCountEl.textContent = `${cart.length}/${MAX_ITEMS} продукта`;
+}
+
+function renderNotes(){
+notesEl.innerHTML = "";
+for(const n of BANKNOTES){
+const div = document.createElement("div");
+div.className = "note" + (selectedNote === n ? " selected" : "");
+div.textContent = `${n} лв.`;
+div.addEventListener("click", () => {
+selectedNote = n;
+renderNotes();
+setStatus("", "");
+});
+notesEl.appendChild(div);
+}
+}
+
+// ====== ДЕЙСТВИЯ ======
+function addToCart(id){
+if(cart.length >= MAX_ITEMS){
+setStatus(`Максимум ${MAX_ITEMS} продукта.`, "bad");
+return;
+}
+cart.push(id);
+renderCart();
+setStatus("", "");
+}
+
+function removeOne(id){
+const idx = cart.lastIndexOf(id);
+if(idx >= 0) cart.splice(idx, 1);
+renderCart();
+setStatus("", "");
+}
+
+function clearAll(clearNote){
+cart = [];
+changeInput.value = "";
+if(clearNote) selectedNote = null;
+renderCart();
+renderNotes();
+}
+
+function onPay(){
+// без подсказки: не показваме тотал; само проверяваме
+if(cart.length === 0){
+setStatus("Първо избери продукти.", "bad");
+return;
+}
+if(selectedNote == null){
+setStatus("Избери банкнота.", "bad");
+return;
+}
+const raw = changeInput.value.trim();
+if(raw === "" || !/^\d+$/.test(raw)){
+setStatus("Напиши рестото като цяло число (лв.).", "bad");
+return;
+}
+
+const changeGiven = Number(raw);
+const total = totalCart();
+
+// ако банкнотата не стига, това е грешка (учениците трябва да изберат друга банкнота)
+if(selectedNote < total){
+mistakes += 1;
+streak = 0;
+setStats();
+setStatus("Банкнотата не стига за покупката.", "bad");
+return;
+}
+
+const correctChange = selectedNote - total;
+
+if(changeGiven === correctChange){
+score += 1;
+streak += 1;
+setStats();
+setStatus("✅ Вярно! Покупката е успешна.", "good");
+// нов клиент
+clearAll(true);
+} else {
+mistakes += 1;
+streak = 0;
+setStats();
+setStatus("❌ Грешно ресто.", "bad");
+// не чистим кошницата — да могат да опитат пак без подсказка
+// (но можеш да промениш това, ако искаш)
+}
+}
+
+// ====== СТАРТ ======
+newPrices();
+renderShop();
+renderCart();
+renderNotes();
+setStats();
+</script>
+</body>
+</html>
